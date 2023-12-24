@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import Layout from './components/Layout';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+// pages
+import ErrorPage from './pages/ErrorPage';
+import HomePage from './pages/HomePage';
+import PostDetailsPage from './pages/PostDetailsPage';
+import PhotosPage from './pages/PhotosPage';
+
+// loaders
+import { loader as postsLoader } from './pages/HomePage/loader';
+import { loader as postDetailsLoader } from './pages/PostDetailsPage/loader';
+import { loader as photosLoader } from './pages/PhotosPage/loader';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "",
+        element: <HomePage />,
+        errorElement: <ErrorPage />,
+        loader: postsLoader,
+        children: [
+          {
+            path: "posts/:id",
+            element: <PostDetailsPage />,
+            loader: postDetailsLoader,
+          }
+        ]
+      },
+      {
+        path: "photos",
+        element: <PhotosPage />,
+        loader: photosLoader,
+      },
+    ],
+  },
+]);
+
+
+const App = () => <RouterProvider router={router} />
 
 export default App;
